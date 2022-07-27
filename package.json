@@ -1,0 +1,19 @@
+{
+  "name": "ragemusic",
+  "version": "1.0.0",
+  "description": "* Simple chatting DiscordBot using API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node index.js" 
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "@discordjs/opus": "^0.8.0",
+    "discord-player": "^5.2.2",
+    "dotenv": "^16.0.1",
+    "ffmpeg-static": "^5.0.2"
+  }
+}

@@ -15,6 +15,7 @@
 ## Mô tả
 
 * 1 discord bot có chức năng phát bài hát trên server bạn.
+* Mời bot: [Invite](https://discord.com/api/oauth2/authorize?client_id=1001410232586608670&permissions=414518266176&scope=bot%20applications.commands)
 
 ## Các chức năng
 

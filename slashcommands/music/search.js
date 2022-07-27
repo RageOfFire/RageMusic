@@ -9,7 +9,7 @@ const run = async({client, interaction, player}) => {
     const searchResult = await player
     .search(keyword, {
         requestedBy: interaction.user,
-        searchEngine: QueryType.YOUTUBE_SEARCH
+        searchEngine: QueryType.AUTO
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });

@@ -9,7 +9,7 @@ const run = async({client, interaction, player}) => {
     const searchResult = await player
     .search(url, {
         requestedBy: interaction.user,
-        searchEngine: QueryType.YOUTUBE_VIDEO
+        searchEngine: QueryType.SPOTIFY_SONG
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
@@ -42,6 +42,6 @@ module.exports = {
             type: "STRING",
             description: "link của bài hát",
             required: true
-        }
+        },
     ], run
 }

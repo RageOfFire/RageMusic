@@ -9,7 +9,7 @@ const run = async({client, interaction, player}) => {
     const searchResult = await player
     .search(url, {
         requestedBy: interaction.user,
-        searchEngine: QueryType.SPOTIFY_PLAYLIST
+        searchEngine: QueryType.YOUTUBE_PLAYLIST
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });

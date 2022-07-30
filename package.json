@@ -1,6 +1,6 @@
 {
   "name": "ragemusic",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Music bot",
   "main": "index.js",
   "scripts": {

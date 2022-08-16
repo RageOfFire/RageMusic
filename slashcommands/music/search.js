@@ -9,7 +9,7 @@ const run = async({client, interaction, player}) => {
     const searchResult = await player
     .search(keyword, {
         requestedBy: interaction.user,
-        searchEngine: QueryType.YOUTUBE_SEARCH
+        searchEngine: QueryType.AUTO
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
@@ -17,17 +17,53 @@ const run = async({client, interaction, player}) => {
     const queue = await player.createQueue(interaction.guild, {
         metadata: interaction.channel
     });
-
     try {
         if (!queue.connection) await queue.connect(interaction.member.voice.channel);
     } catch {
         player.deleteQueue(interaction.guildId);
         return interaction.editReply({ content: "không thể vào kênh thoại của bạn" });
     }
+    const maxTracks = searchResult.tracks.slice(0, 10);
 
-    await interaction.editReply({ content: `⏱ | Đang tải ${searchResult.playlist ? "danh sách" : "bài hát"}...` }).catch((err) => {console.log(err)});
-    searchResult.playlist ? queue.addTracks(searchResult.tracks) : queue.addTrack(searchResult.tracks[0]);
-    if (!queue.playing) await queue.play();
+    await interaction.editReply({
+        embeds: [
+            {
+                title: `Kết quả tìm kiếm cho ${keyword}`,
+                description: `${maxTracks.map((track, i) => `🎶 | **${i + 1}**. ${track.title} | ${track.author}`).join('\n')}\n\nLựa chọn của bạn **1** tới **${maxTracks.length}** hoặc **cancel**`,
+                color: 'faa152',
+            }
+        ]
+    })
+    const collector = interaction.channel.createMessageCollector({
+        time: 15000,
+        max: 1,
+        errors: ['time'],
+        filter: m => m.author.id === interaction.member.id
+    });
+    collector.on('collect', async (query) => {
+        if (query.content.toLowerCase() === 'cancel') return interaction.editReply({ content: `✅ | Quá trình tìm kiếm bị hủy`, ephemeral: true }), collector.stop();
+
+        const value = parseInt(query);
+        if (!value || value <= 0 || value > maxTracks.length) return interaction.editReply({ content: `❌ | Phản hồi không hợp lệ, thử giá trị trong khoảng **1** tới **${maxTracks.length}** hoặc **cancel**... để hủy tìm kiếm ?`, ephemeral: true });
+
+        collector.stop();
+
+        try {
+            if (!queue.connection) await queue.connect(interaction.member.voice.channel);
+        } catch {
+            await player.deleteQueue(interaction.guildId);
+            return interaction.editReply({ content: `❌ | Bro tôi không vào được kênh thoại ${interaction.member}... cứu ?`, ephemeral: true });
+        }
+
+        await interaction.editReply(`🎧 | Đang tải bài hát của bạn chờ xíu...`);
+
+        queue.addTrack(searchResult.tracks[query.content - 1]);
+
+        if (!queue.playing) await queue.play();
+    });
+    collector.on('end', (msg, reason) => {
+        if (reason === 'time') return interaction.editReply({ content:`❌ | Hết thời gian tìm kiếm ${interaction.member}... Bye ?`, ephemeral: true })
+    });
 }
 
 module.exports = {

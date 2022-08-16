@@ -67,6 +67,6 @@ function initEvents(bot) {
     });
     
     player.on("queueEnd", (queue) => {
-        queue.metadata.send("✅ | Hàng đợi đã hoàn thành!");
+        queue.metadata.send("✅ | Hàng đợi đã hết!");
     });
 }

@@ -6,10 +6,11 @@ const run = async({client, interaction, player}) => {
     return interaction.reply({content: "Bạn không ở cùng kênh thoại với tôi", ephemeral: true })
     await interaction.deferReply();
     const url = interaction.options.getString("url");
+    const type = interaction.options.getInteger("type");
     const searchResult = await player
     .search(url, {
         requestedBy: interaction.user,
-        searchEngine: QueryType.YOUTUBE_PLAYLIST
+        searchEngine: type
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
@@ -37,6 +38,26 @@ module.exports = {
     permissions: [],
     devOnly: false,
     options: [
+        {
+            name: "type",
+            type: "INTEGER",
+            description: "Lựa chọn",
+            required: true,
+            choices: [
+                {
+                    name: "YouTube",
+                    value: QueryType.YOUTUBE_PLAYLIST
+                },
+                {
+                    name: "SoundCloud",
+                    value: QueryType.SOUNDCLOUD_PLAYLIST
+                },
+                {
+                    name: "Spotify",
+                    value: QueryType.SPOTIFY_PLAYLIST
+                }
+            ]
+        },
         {
             name: "url",
             type: "STRING",

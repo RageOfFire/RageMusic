@@ -10,7 +10,7 @@ const run = async({client, interaction, player}) => {
     const searchResult = await player
     .search(url, {
         requestedBy: interaction.user,
-        searchEngine: type
+        searchEngine: type || QueryType.YOUTUBE_PLAYLIST
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
@@ -34,20 +34,22 @@ const run = async({client, interaction, player}) => {
 module.exports = {
     name: "playlist",
     category: "music",
-    description: 'Chơi nhạc theo danh sách',
+    description: 'Chơi nhạc theo danh sách type không được chọn thì sẽ mặc định là youtube',
     permissions: [],
     devOnly: false,
     options: [
+        {
+            name: "url",
+            type: "STRING",
+            description: "link của danh sách",
+            required: true
+        },
         {
             name: "type",
             type: "INTEGER",
             description: "Lựa chọn",
             required: true,
             choices: [
-                {
-                    name: "YouTube",
-                    value: QueryType.YOUTUBE_PLAYLIST
-                },
                 {
                     name: "SoundCloud",
                     value: QueryType.SOUNDCLOUD_PLAYLIST
@@ -57,12 +59,6 @@ module.exports = {
                     value: QueryType.SPOTIFY_PLAYLIST
                 }
             ]
-        },
-        {
-            name: "url",
-            type: "STRING",
-            description: "link của danh sách",
-            required: true
         }
     ], run
 }

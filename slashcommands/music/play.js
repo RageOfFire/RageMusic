@@ -10,7 +10,7 @@ const run = async({client, interaction, player}) => {
     const searchResult = await player
     .search(url, {
         requestedBy: interaction.user,
-        searchEngine: type
+        searchEngine: type || QueryType.YOUTUBE_VIDEO
     })
     .catch(() => {});
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
@@ -34,20 +34,22 @@ const run = async({client, interaction, player}) => {
 module.exports = {
     name: "play",
     category: "music",
-    description: 'Chơi nhạc theo link',
+    description: 'Chơi nhạc theo link nếu type không được chọn thì sẽ mặc định là youtube',
     permissions: [],
     devOnly: false,
     options: [
         {
+            name: "url",
+            type: "STRING",
+            description: "link của bài hát",
+            required: true
+        },
+        {
             name: "type",
             type: "INTEGER",
             description: "Lựa chọn",
-            required: true,
+            required: false,
             choices: [
-                {
-                    name: "YouTube",
-                    value: QueryType.YOUTUBE_VIDEO
-                },
                 {
                     name: "SoundCloud",
                     value: QueryType.SOUNDCLOUD_TRACK
@@ -57,12 +59,6 @@ module.exports = {
                     value: QueryType.SPOTIFY_SONG
                 }
             ]
-        },
-        {
-            name: "url",
-            type: "STRING",
-            description: "link của bài hát",
-            required: true
         }
     ], run
 }

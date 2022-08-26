@@ -1,3 +1,4 @@
+const { MessageEmbed } = require('discord.js')
 const { QueueRepeatMode } = require("discord-player");
 const run = async({client, interaction, player}) => {
     await interaction.deferReply();
@@ -6,7 +7,15 @@ const run = async({client, interaction, player}) => {
     const loopMode = interaction.options.getInteger("mode");
     const success = queue.setRepeatMode(loopMode);
     const mode = loopMode === QueueRepeatMode.TRACK ? "🔂" : loopMode === QueueRepeatMode.QUEUE ? "🔁" : "▶";
-    return interaction.editReply({ content: success ? `${mode} | Cập nhật vòng lặp!` : "❌ | Không thể cập nhật vòng lặp!" });
+    const embed = new MessageEmbed()
+    .setColor('#faa152')
+    .setTitle('Vòng lặp')
+    .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+    .setDescription(success ? `${mode} | Cập nhật vòng lặp!` : "❌ | Không thể cập nhật vòng lặp!")
+    .setThumbnail(client.user.displayAvatarURL())
+    .setTimestamp()
+    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+    return interaction.editReply({ embeds: embed });
 }
 
 module.exports = {

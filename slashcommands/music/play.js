@@ -1,3 +1,4 @@
+const { MessageEmbed } = require('discord.js')
 const { QueryType } = require("discord-player");
 const run = async({client, interaction, player}) => {
     if (!interaction.member.voice.channel) 
@@ -13,6 +14,7 @@ const run = async({client, interaction, player}) => {
         searchEngine: type || QueryType.YOUTUBE_VIDEO
     })
     .catch(() => {});
+    const song = searchResult.tracks[0];
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
 
     const queue = await player.createQueue(interaction.guild, {
@@ -25,8 +27,15 @@ const run = async({client, interaction, player}) => {
         player.deleteQueue(interaction.guildId);
         return interaction.editReply({ content: "không thể vào kênh thoại của bạn" });
     }
-
-    await interaction.editReply({ content: `⏱ | Đang tải ${searchResult.playlist ? "danh sách" : "bài hát"}...` }).catch((err) => {console.log(err)});
+    const embed = new MessageEmbed()
+    .setColor('#faa152')
+    .setTitle('Chơi')
+    .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+    .setDescription(`⏱ | Đang tải bài hát **[${song.title}](${song.url})**...`)
+    .setThumbnail(client.user.displayAvatarURL())
+    .setTimestamp()
+    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+    await interaction.editReply({ embeds: [embed] }).catch((err) => {console.log(err)});
     searchResult.playlist ? queue.addTracks(searchResult.tracks) : queue.addTrack(searchResult.tracks[0]);
     if (!queue.playing) await queue.play();
 }

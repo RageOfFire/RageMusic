@@ -1,3 +1,4 @@
+const { MessageEmbed } = require('discord.js')
 const run = async({client, interaction, player}) => {
     await interaction.deferReply();
     const queue = player.getQueue(interaction.guildId);
@@ -7,23 +8,20 @@ const run = async({client, interaction, player}) => {
     const pageEnd = pageStart + 10;
     const currentTrack = queue.current;
     const tracks = queue.tracks.slice(pageStart, pageEnd).map((m, i) => {
-        return `${i + pageStart + 1}. **${m.title}** ([link](${m.url}))`;
+        return `${i + pageStart + 1}. **[${m.title}](${m.url})**`;
     });
-
-    return interaction.editReply({
-        embeds: [
-            {
-                title: "Hàng đợi",
-                description: `${tracks.join('\n')}${
-                    queue.tracks.length > pageEnd
-                        ? `\n...${queue.tracks.length - pageEnd} bài hát nữa`
-                        : 'Có cái nịt'
-                }`,
-                color: 'faa152',
-                fields: [{ name: "Đang chơi", value: `🎶 | **${currentTrack.title}** ([link](${currentTrack.url}))` }]
-            }
-        ]
-    })
+    const embed = new MessageEmbed()
+    .setColor('#faa152')
+    .setTitle('Hàng đợi')
+    .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+    .setDescription(`${tracks.join('\n')}${queue.tracks.length > pageEnd ? `\n...${queue.tracks.length - pageEnd} bài hát nữa` : 'Có cái nịt'}`)
+    .setThumbnail(client.user.displayAvatarURL())
+    .setTimestamp()
+    .addField([
+        { name: "Đang chơi", value: `🎶 | **[${currentTrack.title}](${currentTrack.url})**` }
+    ])
+    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+    return interaction.editReply({ embeds: embed })
 }
 
 module.exports = {

@@ -25,6 +25,7 @@
 * Tráo trộn bài hát ngẫu nhiên
 * bỏ qua tới bài hát nào đó trong danh sách
 * Chơi lại bài hát trước
+* Chế độ 24/7
 * Và còn nhiều nữa...
 
 ## Bắt đầu

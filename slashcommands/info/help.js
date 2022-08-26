@@ -13,9 +13,12 @@ const run = async ({client, interaction, player}) => {
 	})
 	const embed = new MessageEmbed()
 		.setColor('#faa152')
-		.setTitle('RageMusic')
+		.setTitle('Hướng dẫn')
+		.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
 		.setDescription(HelpCMD)
+		.setThumbnail(client.user.displayAvatarURL())
 		.setTimestamp()
+		.setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
 	interaction.reply({ embeds: [embed] }).catch((err) => {console.log(err)});
 }
 

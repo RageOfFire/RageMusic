@@ -16,7 +16,7 @@ const run = async({client, interaction, player}) => {
         progress ? { name: '\u200b', value: progress } : 'Không có bài hát nào đang được chơi',
     )
     .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
-    return interaction.editReply({ embeds: embed });
+    return interaction.editReply({ embeds: [embed] });
 }
 
 module.exports = {

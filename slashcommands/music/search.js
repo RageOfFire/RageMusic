@@ -1,5 +1,5 @@
 const { QueryType } = require("discord-player");
-const { MessageEmbed } = require('discord.js')
+const { Pagination } = require('pagination.djs');
 const run = async({client, interaction, player}) => {
     if (!interaction.member.voice.channel) 
     return interaction.reply({content: "Bạn cần ở trong kênh thoại để sử dụng lệnh này", ephemeral: true })
@@ -24,18 +24,25 @@ const run = async({client, interaction, player}) => {
         player.deleteQueue(interaction.guildId);
         return interaction.editReply({ content: "không thể vào kênh thoại của bạn" });
     }
-    const maxTracks = searchResult.tracks.slice(0, 10);
-    const embed = new MessageEmbed()
+    let descriptions = [];
+    const maxTracks = searchResult.tracks.slice(0, 30);
+    for(let i = 0; i < maxTracks.length; i++) {
+        descriptions.push(`🎶 | **${i + 1}**. ${maxTracks[i].title} | ${maxTracks[i].author}`);
+    }
+    const pagination = new Pagination(interaction, { limit: 10 })
     .setColor('#faa152')
     .setTitle(`Kết quả tìm kiếm cho ${keyword}`)
     .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
-    .setDescription(`${maxTracks.map((track, i) => `🎶 | **${i + 1}**. ${track.title} | ${track.author}`).join('\n')}\n\nLựa chọn của bạn **1** tới **${maxTracks.length}** hoặc **cancel**`)
-    .setThumbnail(client.user.displayAvatarURL())
+    .setDescriptions(descriptions)
+    .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
-    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
-    await interaction.editReply({ embeds: embed })
+    .addFields(
+        { name: "Được đề xuất bởi:", value: `${interaction.user.tag}`, inline: true },
+        { name: "Lựa chọn:", value: `**1** tới **${maxTracks.length}** hoặc **cancel**`, inline: true }
+    )
+    await pagination.render().catch((err) => {console.log(err)});
     const collector = interaction.channel.createMessageCollector({
-        time: 15000,
+        time: 60000,
         max: 1,
         errors: ['time'],
         filter: m => m.author.id === interaction.member.id

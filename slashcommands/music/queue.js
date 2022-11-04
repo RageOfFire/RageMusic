@@ -1,27 +1,26 @@
-const { MessageEmbed } = require('discord.js')
+const { Pagination } = require('pagination.djs');
 const run = async({client, interaction, player}) => {
     await interaction.deferReply();
     const queue = player.getQueue(interaction.guildId);
     if (!queue || !queue.playing) return interaction.editReply({ content: "❌ | Không có bài hát nào đang chơi!" });
-    const page = interaction.options.getNumber("page");
-    const pageStart = 10 * (page ? page : 1 - 1);
-    const pageEnd = pageStart + 10;
     const currentTrack = queue.current;
-    const tracks = queue.tracks.slice(pageStart, pageEnd).map((m, i) => {
-        return `${i + pageStart + 1}. **[${m.title}](${m.url})**`;
-    });
-    const embed = new MessageEmbed()
+    const trackLength = queue.tracks.length;
+    let descriptions = [];
+    for(let i = 0; i < trackLength; i++) {
+        descriptions.push(`${i + 1}. **[${queue.tracks[i].title}](${queue.tracks[i].url})** - ${queue.tracks[i].duration} - ${queue.tracks[i].requestedBy}`);
+    }
+    const pagination = new Pagination(interaction, { limit: 10 })
     .setColor('#faa152')
     .setTitle('Hàng đợi')
     .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
-    .setDescription(`${tracks.join('\n')}${queue.tracks.length > pageEnd ? `\n...${queue.tracks.length - pageEnd} bài hát nữa` : 'Có cái nịt'}`)
-    .setThumbnail(client.user.displayAvatarURL())
+    .setDescriptions(descriptions)
+    .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
-    .addField([
-        { name: "Đang chơi", value: `🎶 | **[${currentTrack.title}](${currentTrack.url})**` }
+    .addFields([
+        { name: "Đang chơi", value: `🎶 | **[${currentTrack.title}](${currentTrack.url})**`, inline: true },
+        { name: "Được đề xuất bởi:", value: `${interaction.user.tag}`, inline: true }
     ])
-    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
-    return interaction.editReply({ embeds: embed })
+    await pagination.render().catch((err) => {console.log(err)});
 }
 
 module.exports = {
@@ -29,12 +28,5 @@ module.exports = {
     category: "music",
     description: 'Danh sách hàng đợi',
     permissions: [],
-    devOnly: false,
-    options: [
-        {
-            name: "page",
-            type: "NUMBER",
-            description: "Trang thứ ? của hàng đợi",
-        }
-    ], run
+    devOnly: false, run
 }

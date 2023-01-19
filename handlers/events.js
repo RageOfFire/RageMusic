@@ -50,23 +50,23 @@ function initEvents(bot) {
         console.log(`[${queue.guild.name}] Lỗi kết nối: ${error.message}`);
     });
     
-    player.on("trackStart", (queue, track) => {
-        queue.metadata.send(`🎶 | Bắt đầu chơi: **${track.title}** trong **${queue.connection.channel.name}**!`);
-    });
+    // player.on("trackStart", (queue, track) => {
+    //     queue.metadata.send(`🎶 | Bắt đầu chơi: **${track.title}** trong **${queue.connection.channel.name}**!`);
+    // });
     
-    player.on("trackAdd", (queue, track) => {
-        queue.metadata.send(`🎶 | Bài hát **${track.title}** đã được thêm vào hàng đợi!`);
-    });
+    // player.on("trackAdd", (queue, track) => {
+    //     queue.metadata.send(`🎶 | Bài hát **${track.title}** đã được thêm vào hàng đợi!`);
+    // });
     
-    player.on("botDisconnect", (queue) => {
-        queue.metadata.send("❌ | Tôi đã bị ngắt kết nối khỏi kênh thoại theo cách thủ công, đang xóa hàng đợi!");
-    });
+    // player.on("botDisconnect", (queue) => {
+    //     queue.metadata.send("❌ | Tôi đã bị ngắt kết nối khỏi kênh thoại theo cách thủ công, đang xóa hàng đợi!");
+    // });
     
-    player.on("channelEmpty", (queue) => {
-        queue.metadata.send("❌ | Không có ai trong kênh thoại, đang rời đi ...");
-    });
+    // player.on("channelEmpty", (queue) => {
+    //     queue.metadata.send("❌ | Không có ai trong kênh thoại, đang rời đi ...");
+    // });
     
-    player.on("queueEnd", (queue) => {
-        queue.metadata.send("✅ | Hàng đợi đã hết!");
-    });
+    // player.on("queueEnd", (queue) => {
+    //     queue.metadata.send("✅ | Hàng đợi đã hết!");
+    // });
 }

@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "build": "docker build -t ragemusic-bot .",
-    "docker": "docker run -d ragemusic-bot --restart unless-stopped"
+    "docker": "docker run -d --restart unless-stopped ragemusic-bot"
   },
   "author": "",
   "license": "ISC",

@@ -9,6 +9,7 @@ WORKDIR /usr/src/ragemusic-bot
 
 
 COPY package.json /usr/src/ragemusic-bot
+COPY package-lock.json /usr/src/ragemusic-bot
 
 RUN npm install
 

@@ -11,7 +11,7 @@ const run = async({client, interaction, player}) => {
     .setDescription('✅ | Chơi lại bài hát trước!')
     .setThumbnail(client.user.displayAvatarURL())
     .setTimestamp()
-    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+    .setFooter({ text: `Được đề xuất bởi ${interaction.user.username}`, iconURL: interaction.user.displayAvatarURL() });
     return interaction.editReply({ embeds: [embed] });
 }
 

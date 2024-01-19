@@ -25,7 +25,7 @@ const run = async({client, interaction, player}) => {
         .setDescription(mode ? '✅ | Đã bật chế độ 24/7!' : '✅ | Đã tắt chế độ 24/7!')
         .setThumbnail(client.user.displayAvatarURL())
         .setTimestamp()
-        .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+        .setFooter({ text: `Được đề xuất bởi ${interaction.user.username}`, iconURL: interaction.user.displayAvatarURL() });
         interaction.editReply({ embeds: [embed] }).catch((err) => {console.log(err)});
     }
 }

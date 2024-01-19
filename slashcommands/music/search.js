@@ -1,18 +1,18 @@
 const { QueryType } = require("discord-player");
-const { Pagination } = require('pagination.djs');
-const run = async({client, interaction, player}) => {
-    if (!interaction.member.voice.channel) 
-    return interaction.reply({content: "Bạn cần ở trong kênh thoại để sử dụng lệnh này", ephemeral: true })
-    else if(interaction.guild.me.voice.channelId && interaction.member.voice.channelId !== interaction.guild.me.voice.channelId) 
-    return interaction.reply({content: "Bạn không ở cùng kênh thoại với tôi", ephemeral: true })
+const { MessageEmbed } = require('discord.js')
+const run = async ({ client, interaction, player }) => {
+    if (!interaction.member.voice.channel)
+        return interaction.reply({ content: "Bạn cần ở trong kênh thoại để sử dụng lệnh này", ephemeral: true })
+    else if (interaction.guild.me.voice.channelId && interaction.member.voice.channelId !== interaction.guild.me.voice.channelId)
+        return interaction.reply({ content: "Bạn không ở cùng kênh thoại với tôi", ephemeral: true })
     await interaction.deferReply();
     const keyword = interaction.options.getString("keyword");
     const searchResult = await player
-    .search(keyword, {
-        requestedBy: interaction.user,
-        searchEngine: QueryType.AUTO
-    })
-    .catch(() => {});
+        .search(keyword, {
+            requestedBy: interaction.user,
+            searchEngine: QueryType.AUTO
+        })
+        .catch(() => { });
     if (!searchResult || !searchResult.tracks.length) return interaction.editReply({ content: "Không tìm thấy kết quả" });
 
     const queue = await player.createQueue(interaction.guild, {
@@ -25,22 +25,22 @@ const run = async({client, interaction, player}) => {
         return interaction.editReply({ content: "không thể vào kênh thoại của bạn" });
     }
     let descriptions = [];
-    const maxTracks = searchResult.tracks.slice(0, 30);
-    for(let i = 0; i < maxTracks.length; i++) {
+    const maxTracks = searchResult.tracks.slice(0, 10);
+    for (let i = 0; i < maxTracks.length; i++) {
         descriptions.push(`🎶 | **${i + 1}**. ${maxTracks[i].title} | ${maxTracks[i].author}`);
     }
-    const pagination = new Pagination(interaction, { limit: 10 })
-    .setColor('#faa152')
-    .setTitle(`Kết quả tìm kiếm cho ${keyword}`)
-    .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
-    .setDescriptions(descriptions)
-    .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
-    .setTimestamp()
-    .addFields(
-        { name: "Được đề xuất bởi:", value: `${interaction.user.tag}`, inline: true },
-        { name: "Lựa chọn:", value: `**1** tới **${maxTracks.length}** hoặc **cancel**`, inline: true }
-    )
-    await pagination.render().catch((err) => {console.log(err)});
+    const embed = new MessageEmbed()
+        .setColor('#faa152')
+        .setTitle(`Kết quả tìm kiếm cho ${keyword}`)
+        .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+        .setDescription(descriptions.join("\n"))
+        .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
+        .setTimestamp()
+        .addFields(
+            { name: "Được đề xuất bởi:", value: `${interaction.user.username}`, inline: true },
+            { name: "Lựa chọn:", value: `**1** tới **${maxTracks.length}** hoặc **cancel**`, inline: true }
+        )
+    await interaction.editReply({ embeds: [embed] }).catch((err) => { console.log(err) });
     const collector = interaction.channel.createMessageCollector({
         time: 60000,
         max: 1,
@@ -62,14 +62,21 @@ const run = async({client, interaction, player}) => {
             return interaction.editReply({ content: `❌ | Bro tôi không vào được kênh thoại ${interaction.member}... cứu !`, ephemeral: true });
         }
 
-        await interaction.editReply(`🎧 | Đang tải bài hát của bạn chờ xíu...`);
+        const embed = new MessageEmbed()
+            .setColor('#faa152')
+            .setTitle(`🎧 | Đang tải bài hát của bạn chờ xíu...`)
+            .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+            .setDescription(`🎶 | **${value}**. ${searchResult.tracks[query.content - 1].title} | ${searchResult.tracks[query.content - 1].author}`)
+            .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
+            .setTimestamp()
+        await interaction.editReply({ embeds: [embed] }).catch((err) => { console.log(err) });
 
         queue.addTrack(searchResult.tracks[query.content - 1]);
 
         if (!queue.playing) await queue.play();
     });
     collector.on('end', (msg, reason) => {
-        if (reason === 'time') return interaction.editReply({ content:`❌ | Hết thời gian tìm kiếm ${interaction.member}... Bye !`, ephemeral: true })
+        if (reason === 'time') return interaction.editReply({ content: `❌ | Hết thời gian tìm kiếm ${interaction.member}... Bye !`, ephemeral: true })
     });
 }
 

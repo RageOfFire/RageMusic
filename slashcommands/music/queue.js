@@ -1,4 +1,4 @@
-const { Pagination } = require('pagination.djs');
+const { MessageEmbed } = require('discord.js')
 const run = async({client, interaction, player}) => {
     await interaction.deferReply();
     const queue = player.getQueue(interaction.guildId);
@@ -9,18 +9,18 @@ const run = async({client, interaction, player}) => {
     for(let i = 0; i < trackLength; i++) {
         descriptions.push(`${i + 1}. **[${queue.tracks[i].title}](${queue.tracks[i].url})** - ${queue.tracks[i].duration} - ${queue.tracks[i].requestedBy}`);
     }
-    const pagination = new Pagination(interaction, { limit: 10 })
+    const embed = new MessageEmbed()
     .setColor('#faa152')
     .setTitle('Hàng đợi')
     .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
-    .setDescriptions(descriptions)
+    .setDescription(descriptions.join("\n"))
     .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
     .setTimestamp()
     .addFields([
         { name: "Đang chơi", value: `🎶 | **[${currentTrack.title}](${currentTrack.url})**`, inline: true },
-        { name: "Được đề xuất bởi:", value: `${interaction.user.tag}`, inline: true }
+        { name: "Được đề xuất bởi:", value: `${interaction.user.username}`, inline: true }
     ])
-    await pagination.render().catch((err) => {console.log(err)});
+    await interaction.editReply({ embeds: [embed] }).catch((err) => {console.log(err)});
 }
 
 module.exports = {

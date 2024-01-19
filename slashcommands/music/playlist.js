@@ -34,7 +34,7 @@ const run = async({client, interaction, player}) => {
     .setDescription(`⏱ | Đang tải ${searchResult.tracks.length} bài hát từ playlist **[${playlist.title}](${playlist.url})**...`)
     .setThumbnail(client.user.displayAvatarURL())
     .setTimestamp()
-    .setFooter({ text: `Được đề xuất bởi ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+    .setFooter({ text: `Được đề xuất bởi ${interaction.user.username}`, iconURL: interaction.user.displayAvatarURL() });
     await interaction.editReply({ embeds: [embed] }).catch((err) => {console.log(err)});
     searchResult.playlist ? queue.addTracks(searchResult.tracks) : queue.addTrack(searchResult.tracks[0]);
     if (!queue.playing) await queue.play();
